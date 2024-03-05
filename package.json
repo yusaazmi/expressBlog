@@ -18,6 +18,9 @@
     "sequelize-cli": "^6.6.2"
   },
   "dependencies": {
-    "@sequelize/core": "^7.0.0-alpha.37"
+    "@sequelize/core": "^7.0.0-alpha.37",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
+    "jsonwebtoken": "^9.0.2"
   }
 }

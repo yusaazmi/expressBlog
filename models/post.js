@@ -14,14 +14,21 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      models.Post.belongsTo(models.File, { foreignKey: 'thumbnail' })
     }
   }
   Post.init({
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
+    },
     title: DataTypes.STRING,
     description: DataTypes.TEXT,
     thumbnail: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
+      foreignKey: true,
       references: {
         model: 'File',
         key: 'id'
@@ -45,7 +52,6 @@ module.exports = (sequelize, DataTypes) => {
     deletedAt: {
       allowNull: true,
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
     }
   }, {
     sequelize,

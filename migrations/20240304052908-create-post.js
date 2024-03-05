@@ -16,7 +16,12 @@ module.exports = {
         type: Sequelize.TEXT
       },
       thumbnail: {
-        type: Sequelize.STRING
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: {
+          model: 'files',
+          key: 'id'
+        }
       },
       status: {
         type: Sequelize.ENUM,

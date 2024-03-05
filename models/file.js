@@ -17,6 +17,11 @@ module.exports = (sequelize, DataTypes) => {
 
   }
   File.init({
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
+    },
     filename: DataTypes.STRING,
     type: DataTypes.STRING,
     url: DataTypes.STRING,
@@ -34,7 +39,6 @@ module.exports = (sequelize, DataTypes) => {
     deletedAt: {
       allowNull: true,
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
     }
   }, {
     sequelize,
