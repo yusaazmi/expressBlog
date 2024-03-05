@@ -37,6 +37,9 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Category',
+    timestamps: true,
+    paranoid: true,
+    deletedAt: 'deletedAt'
   });
   return Category;
 };

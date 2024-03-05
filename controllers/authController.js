@@ -1,6 +1,7 @@
 const { User } = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+require('dotenv').config();
 
 
 class authController {
@@ -8,7 +9,9 @@ class authController {
         try {
             const { email, password } = req.body;
             const user = await User.findOne({
-                email
+                where: {
+                    email: email
+                }
             });
             if (!user) {
                 return res.status(401).json({
@@ -21,7 +24,7 @@ class authController {
                     message: "Email atau Password salah!"
                 });
             }
-            const token = jwt.sign({ userId: user.id, role: user.role }, 'shhhhh', {
+            const token = jwt.sign({ userId: user.id, role: user.role }, process.env.SECRET_KEY, {
                 expiresIn: '3600000',
             });
             const decodedToken = jwt.decode(token);
@@ -38,6 +41,22 @@ class authController {
             return res.status(500).json({
                 message: error.message
             });
+        }
+    }
+    async getMyProfile(req, res) {
+        try {
+            console.log(req.user)
+            const user = await User.findByPk(req.user.userId, {
+                attributes: { exclude: ['password'] }
+            });
+
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+            return res.status(200).json({ user });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: 'Internal Server Error' });
         }
     }
 }

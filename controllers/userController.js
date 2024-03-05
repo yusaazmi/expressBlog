@@ -19,19 +19,40 @@ class userController {
     }
     async store(req, res) {
         try {
-            const { fullName, email, password, role, avatar } = req.body;
-            console.log(role);
+            const { fullName, email, password, role, avatar, status } = req.body;
             const user = await User.create({
                 fullName: fullName,
                 email: email,
                 password: bcrypt.hashSync(password, 10),
                 role: role,
                 avatar: avatar,
+                status: status
             });
 
             return res.json({
                 code: 201,
                 message: "Data berhasil dibuat!",
+                data: user
+            });
+        } catch (error) {
+            return res.status(400).json({
+                message: error.message
+            });
+        }
+    }
+    async show(req, res) {
+        try {
+            const { id } = req.params;
+            const user = await User.findByPk(id);
+            if (!user) {
+                return res.status(401).json({
+                    code: 401,
+                    message: "User tidak ditemukan"
+                });
+            }
+            return res.status(200).json({
+                code: 200,
+                message: "Data sudah diterima",
                 data: user
             });
         } catch (error) {
