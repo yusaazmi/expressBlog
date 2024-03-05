@@ -42,8 +42,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    paranoid: true,
     modelName: 'File',
+    timestamps: true,
+    paranoid: true,
+    deletedAt: 'deletedAt'
   });
   return File;
 };

@@ -2,11 +2,8 @@
 const {
   Model
 } = require('sequelize');
-const { DeletedAt } = require('@sequelize/core/decorators-legacy');
-
 module.exports = (sequelize, DataTypes) => {
-  class Post extends Model {
-    DeletedAt;
+  class PostCategory extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -14,36 +11,32 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      models.Post.belongsTo(models.File, { foreignKey: 'thumbnail' });
-      models.Post.belongsToMany(models.Category, {
-        through: 'PostCategory',
-        foreignKey: 'postId',
-        as: 'categories'
-      });
     }
   }
-  Post.init({
+  PostCategory.init({
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
-    title: DataTypes.STRING,
-    description: DataTypes.TEXT,
-    thumbnail: {
-      type: DataTypes.STRING,
+    postId: {
+      type: DataTypes.UUID,
       allowNull: true,
       foreignKey: true,
       references: {
-        model: 'File',
+        model: 'Post',
         key: 'id'
       }
     },
-    status: {
-      type: DataTypes.ENUM,
-      values: ['Draft', 'Published']
+    categoryId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      foreignKey: true,
+      references: {
+        model: 'Category',
+        key: 'id'
+      }
     },
-    slug: DataTypes.STRING,
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
@@ -60,10 +53,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'Post',
+    modelName: 'PostCategory',
     timestamps: true,
     paranoid: true,
     deletedAt: 'deletedAt'
   });
-  return Post;
+  return PostCategory;
 };

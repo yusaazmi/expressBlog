@@ -21,7 +21,10 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true
     },
     fullName: DataTypes.STRING,
-    email: DataTypes.STRING,
+    email: {
+      type: DataTypes.STRING,
+      unique: true
+    },
     role: {
       type: DataTypes.ENUM,
       values: ['Super Admin', 'Creator']
@@ -56,6 +59,9 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'User',
+    timestamps: true,
+    paranoid: true,
+    deletedAt: 'deletedAt'
   });
   return User;
 };
