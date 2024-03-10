@@ -61,6 +61,56 @@ class userController {
             });
         }
     }
+    async update(req, res) {
+        try {
+            const { id } = req.params;
+            const { fullName, email, password, role, status } = req.body;
+            const user = await User.findByPk(id);
+            if (!user) {
+                return res.json({
+                    code: 400,
+                    message: "Data tidak ditemukan!"
+                });
+            }
+            user.update({
+                fullName: fullName,
+                email: email,
+                password: bcrypt.hashSync(password, 10),
+                role: role,
+                status: status
+            });
+            return res.json({
+                code: 200,
+                message: "Data berhasil diperbarui!",
+                data: user
+            });
+        } catch (error) {
+            return res.status(400).json({
+                message: error.message
+            });
+        }
+    }
+    async destroy(req, res) {
+        try {
+            const { id } = req.params;
+            const user = await User.findByPk(id);
+            if (!user) {
+                return res.json({
+                    code: 400,
+                    message: "Data tidak ditemukan!"
+                });
+            }
+            user.destroy();
+            return res.json({
+                code: 200,
+                message: "Data berhasil dihapus!"
+            });
+        } catch (error) {
+            return res.status(400).json({
+                message: error.message
+            });
+        }
+    }
 }
 
 module.exports = new userController();

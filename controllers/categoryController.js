@@ -3,13 +3,21 @@ const { Category } = require('../models');
 
 class categoryController {
     async index(req, res) {
+        const resultPerPage = 5;
+        const currentPage = Number(req.query.page) || 1;
+        const offset = resultPerPage * (currentPage - 1);
         try {
-            const category = await Category.findAll();
+            const categoryCount = await Category.count();
+            const categories = await Category.findAll({
+                limit: resultPerPage,
+                offset: offset
+            });
             return res.json({
                 code: 200,
-                message: `${category.length} sudah diterima`,
-                count: category.length,
-                data: category
+                message: `${categories.length} categories diterima`,
+                count: categoryCount,
+                page: currentPage,
+                data: categories
             });
         } catch (error) {
             return res.status(400).json({

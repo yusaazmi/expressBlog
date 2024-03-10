@@ -18,10 +18,14 @@ function verifyToken(req, res, next) {
 function verifyTokenAdmin(req, res, next) {
     try {
         const token = req.headers.authorization.split(' ')[1];
-        if (!token) return res.status(401).json({
-            code: 401,
-            message: "Akses ditolak"
-        });
+
+        if (!token) {
+            return res.status(401).json({
+                code: 401,
+                message: "Akses ditolak"
+            });
+        }
+
         jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
             if (err) {
                 return res.status(401).json({
@@ -45,4 +49,7 @@ function verifyTokenAdmin(req, res, next) {
     }
 }
 
-module.exports = verifyToken, verifyTokenAdmin;
+module.exports = {
+    verifyToken: verifyToken,
+    verifyTokenAdmin: verifyTokenAdmin
+};
