@@ -20,19 +20,21 @@ class authController {
             }
             const checkPassword = bcrypt.compare(password, user.password);
             if (!checkPassword) {
-                return res.status(401).json({
+                return res.status(400).json({
                     message: "Email atau Password salah!"
                 });
             }
             const token = jwt.sign({ userId: user.id, role: user.role }, process.env.SECRET_KEY, {
-                expiresIn: '3600000',
+                expiresIn: '360000',
             });
+            const refreshToken = jwt.sign({ userId: user.id, role: user.role }, process.env.REFRESH_SECRET_KEY);
             const decodedToken = jwt.decode(token);
             const expiresIn = decodedToken.exp;
             res.status(200).json({
                 code: 200,
                 message: "Berhasil masuk!",
                 accessToken: token,
+                refreshToken: refreshToken,
                 expiresIn: expiresIn,
                 tokenType: "Bearer",
                 user: user
@@ -58,6 +60,33 @@ class authController {
             console.error(error);
             return res.status(500).json({ message: 'Internal Server Error' });
         }
+    }
+    async refreshToken(req, res) {
+        const refreshToken = req.body.refreshToken;
+
+        if (!refreshToken) {
+            return res.status(401).json({
+                message: "Refresh token is required."
+            });
+        }
+
+        jwt.verify(refreshToken, process.env.REFRESH_SECRET_KEY, (err, decoded) => {
+            if (err) {
+                return res.status(403).json({
+                    message: "Invalid refresh token."
+                });
+            }
+
+            const userId = decoded.userId;
+            const userRole = decoded.role;
+            const accessToken = jwt.sign({ userId, role: userRole }, process.env.SECRET_KEY, {
+                expiresIn: '360000',
+            });
+
+            res.json({
+                accessToken: accessToken
+            });
+        });
     }
 }
 
